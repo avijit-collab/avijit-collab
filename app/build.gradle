@@ -1,0 +1,83 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+android {
+    compileSdkVersion 30
+    buildToolsVersion "30.0.0"
+
+    defaultConfig {
+        applicationId "com.currency.currencyconverter"
+        minSdkVersion 21
+        targetSdkVersion 30
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    dataBinding {
+        enabled = true
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+}
+
+dependencies {
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "androidx.core:core-ktx:$rootProject.CORE_VERSION"
+    implementation "androidx.appcompat:appcompat:$rootProject.APP_COMPAT_VERSION"
+    implementation "com.google.android.material:material:$rootProject.MATERIAL_VERSION"
+    implementation "androidx.constraintlayout:constraintlayout:$rootProject.CONSTRAINT_LAYOUT_VERSION"
+    testImplementation "junit:junit:$rootProject.JUNIT_VERSION"
+    androidTestImplementation "androidx.test.ext:junit:$rootProject.EXT_JUNIT_VERSION"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.ESPRESSO_VERSION"
+
+    /* Life cycle dependencies*/
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$rootProject.LIFECYCLE_VERSION"
+
+    /*Networks*/
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.RETROFIT_VERSION"
+    implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.INTERCEPTOR_VERSION"
+    implementation "com.squareup.retrofit2:converter-gson:$rootProject.RETROFIT_VERSION"
+
+    implementation "androidx.recyclerview:recyclerview:$rootProject.RECYCLER_VIEW_VERSION"
+
+    implementation "androidx.room:room-runtime:$rootProject.ROOM_DB_VERSIONS"
+    kapt "androidx.room:room-compiler:$rootProject.ROOM_DB_VERSIONS"
+    /**
+     * Dagger2 dependencies
+     * */
+    implementation "com.google.dagger:dagger:$rootProject.DAGGER_VERSION"
+    implementation "com.google.dagger:dagger-android:$rootProject.DAGGER_VERSION"
+    kapt "com.google.dagger:dagger-android-processor:$rootProject.DAGGER_VERSION"
+    kapt "com.google.dagger:dagger-compiler:$rootProject.DAGGER_VERSION"
+
+    /**
+     * coroutines dependencies
+     * */
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.COROUTINE_VERSION"
+
+   /**
+    * worker manager dependency
+    * */
+    implementation "androidx.work:work-runtime-ktx:$rootProject.WORKMANAGER_VERSION"
+
+    /**
+     * SDP (Dimen) Versions
+     * */
+    implementation "com.intuit.sdp:sdp-android:$rootProject.SDP_VESRION"
+
+}
