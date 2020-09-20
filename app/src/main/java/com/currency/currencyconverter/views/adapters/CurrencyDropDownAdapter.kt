@@ -35,6 +35,4 @@ class CurrencyDropDownAdapter(var currencyList: List<Currency>) :
 
 
     }
-
-
 }

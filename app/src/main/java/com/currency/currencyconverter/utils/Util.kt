@@ -7,7 +7,7 @@ import kotlin.math.round
 
 private val decimalFormat = DecimalFormat("#,###.##")
 
-fun convertCurrencyMapToList(map: Map<String, String>): ArrayList<Currency>{
+fun convertCurrencyMapToList(map: Map<String, String>): ArrayList<Currency> {
     val list = arrayListOf<Currency>()
     for (entry in map)
         list.add(Currency(entry.key, entry.value))
@@ -20,4 +20,8 @@ fun Double.round(decimals: Int): Double {
     return round(this * multiplier) / multiplier
 }
 
-fun display(currency: CurrencyAmount): String = "${currency.currency.code} ${decimalFormat.format(currency.amount.round(2))}"
+/**
+ * Display the calculated currency
+ * @param currency*/
+fun display(currency: CurrencyAmount): String =
+    "${currency.currency.code} ${decimalFormat.format(currency.amount.round(2))}"

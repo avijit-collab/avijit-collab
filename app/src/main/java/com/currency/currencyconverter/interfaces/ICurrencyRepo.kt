@@ -6,6 +6,13 @@ import com.currency.currencyconverter.models.CurrencyExchangeRate
 
 interface ICurrencyRepo {
     suspend fun loadCurrencies(forceRemote: Boolean = false): List<Currency>
-    fun loadExchangeRates(callback: ((CurrencyExchangeRate?) -> Unit)? = null, forceRemote: Boolean = false)
+    fun loadExchangeRates(
+        callback: ((CurrencyExchangeRate?) -> Unit)? = null,
+        forceRemote: Boolean = false
+    )
+
+    /**
+     * Exchange rate refresh callback
+     */
     fun setExchangeRateCallBack(callback: (CurrencyExchangeRate?) -> Unit)
 }

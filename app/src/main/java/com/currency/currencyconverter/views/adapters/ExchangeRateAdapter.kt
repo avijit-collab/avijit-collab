@@ -23,10 +23,12 @@ class ExchangeRateAdapter(private var currencyRateList: ArrayList<CurrencyAmount
     }
 
     override fun getItemCount(): Int {
-        return currencyRateList?.size?:0
+        return currencyRateList?.size ?: 0
 
     }
 
+    /**
+     * Update data for recycler adapter*/
     fun setExchangeRate(rates: ArrayList<CurrencyAmount>) {
         currencyRateList = rates
         notifyDataSetChanged()
@@ -37,7 +39,7 @@ class ExchangeRateAdapter(private var currencyRateList: ArrayList<CurrencyAmount
         holder.bindItem(currencyRateList?.get(position))
     }
 
-    inner class ExchangeRateViewHolder( itemView: View) :
+    inner class ExchangeRateViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         fun bindItem(currencyAmount: CurrencyAmount?) {
             currencyAmount?.let {

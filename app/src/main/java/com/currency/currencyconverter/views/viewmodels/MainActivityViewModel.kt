@@ -7,8 +7,7 @@ import com.currency.currencyconverter.interfaces.ICurrencyRepo
 import com.currency.currencyconverter.models.Currency
 import com.currency.currencyconverter.models.CurrencyAmount
 import com.currency.currencyconverter.models.CurrencyExchangeRate
-import com.currency.currencyconverter.utils.Data
-import com.currency.currencyconverter.utils.ExchangeRateCalculator
+import com.currency.currencyconverter.utils.*
 import kotlinx.coroutines.launch
 import java.lang.Exception
 import javax.inject.Inject
@@ -16,7 +15,7 @@ import javax.inject.Inject
 open class MainActivityViewModel
 @Inject constructor(
     private val repoI: ICurrencyRepo
-): ViewModel() {
+) : ViewModel() {
 
     open val currencies: MutableLiveData<Data<List<Currency>>> = MutableLiveData()
 
@@ -32,69 +31,101 @@ open class MainActivityViewModel
         init()
     }
 
-    private fun init(){
-        loadCurrencies {
+    private fun init() {
+        getCurrency {
             initExchangeRates()
         }
     }
 
-    private fun loadCurrencies(initExchangeRate: () -> Unit){
-        //load the currencies first
-        currencies.postValue( Data.loading(currencies.value?.data))
+    /**
+     * Load currency when launch the application
+     */
+    private fun getCurrency(initExchangeRate: () -> Unit) {
+        currencies.postValue(Data.loading(currencies.value?.data))
         viewModelScope.launch {
-            try{
+            try {
                 val values = repoI.loadCurrencies()
-                if(values.isEmpty())
-                    currencies.postValue(Data.error(currencies.value?.data ?: listOf(), "Server returned empty data"))
+                if (values.isEmpty())
+                    currencies.postValue(
+                        Data.error(
+                            currencies.value?.data ?: listOf(),
+                            CURRENCY_ERROR
+                        )
+                    )
                 else {
                     currencies.postValue(Data.success(values))
                     calcCurrencies = values
                     initExchangeRate.invoke()
                 }
-            }catch (ex: Exception){
-                currencies.postValue(Data.error(currencies.value?.data ?: listOf(), ex.message ?: "unknown error"))
+            } catch (ex: Exception) {
+                currencies.postValue(
+                    Data.error(
+                        currencies.value?.data ?: listOf(),
+                        ex.message ?: "unknown error"
+                    )
+                )
             }
         }
     }
 
-    private fun initExchangeRates(){
-        exchangeRates.postValue( Data.loading(exchangeRates.value?.data))
+    private fun initExchangeRates() {
+        exchangeRates.postValue(Data.loading(exchangeRates.value?.data))
         viewModelScope.launch {
             try {
                 val callback: (CurrencyExchangeRate?) -> Unit = {
-                    if(it == null)
-                        exchangeRates.postValue(Data.error(exchangeRates.value?.data, "Server returned empty data"))
+                    if (it == null)
+                        exchangeRates.postValue(
+                            Data.error(
+                                exchangeRates.value?.data,
+                                EXCHANGE_RATE_ERROR
+                            )
+                        )
                     else {
                         exchangeRates.postValue(Data.success(it))
-                        initCalculator(it)
+                        initExchangeCalculator(it)
                     }
                 }
                 repoI.loadExchangeRates(callback)
                 repoI.setExchangeRateCallBack(callback)
             } catch (ex: Exception) {
-                exchangeRates.postValue( Data.error(exchangeRates.value?.data, ex.message ?: "unknown error"))
+                exchangeRates.postValue(
+                    Data.error(
+                        exchangeRates.value?.data,
+                        ex.message ?: "unknown error"
+                    )
+                )
             }
         }
     }
 
-    private fun initCalculator(exchangeRates: CurrencyExchangeRate){
-        if(exchangeRateCalculator == null)
-            exchangeRateCalculator = ExchangeRateCalculator( exchangeRates, calcCurrencies)
-        else{
+    /**
+     * Initialize exchange rate calculator object
+     * @param exchangeRates
+     */
+    private fun initExchangeCalculator(exchangeRates: CurrencyExchangeRate) {
+        if (exchangeRateCalculator == null)
+            exchangeRateCalculator = ExchangeRateCalculator(exchangeRates, calcCurrencies)
+        else {
             exchangeRateCalculator!!.exchangeRates = exchangeRates
             exchangeRateCalculator!!.currencies = calcCurrencies
         }
     }
 
-    fun calculate(amount: Double, currency: Currency) {
-        if(exchangeRateCalculator == null){
-            data.postValue( Data.error(null, "unable to calculate exchange rates"))
+    /**
+     * Calculate and convert the to the source currency exchange rate
+     * @param amount entered amount
+     * @currency Currency object contains code of
+     * currency and name of the currency
+     */
+    fun exchangeRateCalculate(amount: Double, currency: Currency) {
+        if (exchangeRateCalculator == null) {
+            data.postValue(Data.error(null, EXCHANGE_RATE_CALCULATION_ERROR))
             return
         }
-        data.postValue( Data.loading(null))
+        data.postValue(Data.loading(null))
         viewModelScope.launch {
-            exchangeRateCalculator!!.calculate(amount, currency) {
-                data.postValue( Data.success(it))
+            exchangeRateCalculator!!.convertToSourceCurrency(amount, currency) {
+                data.postValue(Data.success(it))
             }
         }
     }

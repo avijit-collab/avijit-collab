@@ -43,12 +43,15 @@ class MainActivity : AppCompatActivity(), TextWatcher {
 
         val daggerComponent = (application as App).daggerComponent()
         daggerComponent.inject(this)
+
         viewModel = ViewModelProvider(this, viewModelFactory).get(MainActivityViewModel::class.java)
         workerManager = WorkManager.getInstance(this)
+
         currencyInputEditText.addTextChangedListener(this)
         currencyRateRecyclerView.layoutManager = LinearLayoutManager(this)
         currencyRateRecyclerView.adapter = ExchangeRateAdapter(arrayListOf())
         setSpinnerOnItemSelectedListener()
+
         setObservers()
         setWorkManager()
     }
@@ -112,7 +115,6 @@ class MainActivity : AppCompatActivity(), TextWatcher {
             when (it.status) {
                 StatusEnum.SUCCESS -> {
                     calculateExchangeRate()
-
                 }
 
                 StatusEnum.LOADING -> {
@@ -182,7 +184,7 @@ class MainActivity : AppCompatActivity(), TextWatcher {
         }
         val currencyType = currencySpinner.selectedItem as Currency
         val value = currencyInputEditText.text.toString().toDouble()
-        viewModel.calculate(value, currencyType)
+        viewModel.exchangeRateCalculate(value, currencyType)
     }
 
 }

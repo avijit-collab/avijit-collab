@@ -10,7 +10,7 @@ import com.currency.currencyconverter.models.CurrencyExchangeRate
 import com.currency.currencyconverter.utils.DB_NAME
 import com.currency.currencyconverter.utils.ExchangeRatesMapTypeConverter
 
-@Database(entities = [CurrencyExchangeRate::class, Currency::class], version = 1)
+@Database(entities = [CurrencyExchangeRate::class, Currency::class], version = 1,exportSchema = false)
 @TypeConverters(value = [ExchangeRatesMapTypeConverter::class])
 abstract class AppDatabase : RoomDatabase() {
     abstract fun exchangeRateDao(): ExchangeRateDao

@@ -13,11 +13,16 @@ class ExchangeRateCalculator (
     var currencies: List<Currency>,
     private val dispatchers: CoroutineDispatcher = Dispatchers.IO
 ){
-    suspend fun calculate(amt: Double, currency: Currency, callback: (List<CurrencyAmount>) -> Unit) =
+    /**
+     * Convert entered amount to source currency
+     * @param amount
+     * @param currency
+     * @param callback callback to notify after done the task
+     */
+    suspend fun convertToSourceCurrency(amount: Double, currency: Currency, callback: (List<CurrencyAmount>) -> Unit) =
         withContext(dispatchers){
             try{
-                //convert amount to source currency
-                val sourceAmt = convertToSourceAmt(amt, currency)
+                val sourceAmt = convertToSourceAmt(amount, currency)
                 val list = arrayListOf<CurrencyAmount>()
                 for (entry: Map.Entry<String, Double> in exchangeRates.quotes){
                     val key = entry.key.substring(3)
